@@ -1,0 +1,234 @@
+openapi: 3.0.2
+info:
+    title: FISH-TRANSPORT-DOC
+    version: 1.0.0
+    description: >-
+        Services for Transport Document Management. Transport Documents are required to be completed and
+        submitted by the transporters of fishing trip catch from the vessel to the fish buyer
+servers:
+    -
+        url: 'http://petstore.swagger.io/api'
+paths:
+    /transportdocs:
+        summary: Path used to manage the list of transportdocs.
+        description: >-
+            The REST endpoint/path used to list and create zero or more `transportDoc` entities.  This path
+            contains a `GET` and `POST` operation to perform the list and create tasks, respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/TransportDoc'
+                    description: Successful response - returns an array of `TransportDoc` entities.
+            operationId: gettransportDocs
+            summary: List All transportDocs
+            description: Gets a list of all `transportDoc` entities.
+        post:
+            requestBody:
+                description: A new `transportDoc` to be created.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TransportDoc'
+                required: true
+            responses:
+                '201':
+                    description: Successful response.
+            operationId: createtransportDoc
+            summary: Create a transportDoc
+            description: Creates a new instance of a `transportDoc`.
+    '/transportdocs/{transportdocId}':
+        summary: Path used to manage a single transportDoc.
+        description: >-
+            The REST endpoint/path used to get, update, and delete single instances of an `transportDoc`. 
+            This path contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and
+            delete tasks, respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TransportDoc'
+                    description: Successful response - returns a single `transportDoc`.
+            operationId: gettransportDoc
+            summary: Get a transportDoc
+            description: Gets the details of a single instance of a `transportDoc`.
+        put:
+            requestBody:
+                description: Updated `transportDoc` information.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TransportDoc'
+                required: true
+            responses:
+                '202':
+                    description: Successful response.
+            operationId: updatetransportDoc
+            summary: Update a transportDoc
+            description: Updates an existing `transportDoc`.
+        delete:
+            responses:
+                '204':
+                    description: Successful response.
+            operationId: deletetransportDoc
+            summary: Delete a transportDoc
+            description: Deletes an existing `transportDoc`.
+        parameters:
+            -
+                name: transportdocId
+                description: A unique identifier for a `transportDoc`.
+                schema:
+                    type: string
+                in: path
+                required: true
+components:
+    schemas:
+        Error:
+            required:
+                - code
+                - message
+            properties:
+                code:
+                    format: int32
+                    type: integer
+                message:
+                    type: string
+        TransportDoc:
+            title: Root Type for TransportDoc
+            description: ''
+            required:
+                - vessel
+                - id
+            type: object
+            properties:
+                vessel:
+                    $ref: '#/components/schemas/Vessel'
+                    properties:
+                        vesselName:
+                            type: string
+                        vesselRegistrationNumber:
+                            type: string
+                trips:
+                    type: object
+                    properties:
+                        portOfLanding:
+                            type: string
+                        logsheetNumber:
+                            type: string
+                vehicle:
+                    type: object
+                    properties:
+                        vehicleRegistration:
+                            type: string
+                weighers:
+                    type: object
+                    properties:
+                        weighedOnLanding:
+                            type: boolean
+                        weighedAfterTransport:
+                            type: boolean
+                        approvedWeighSystemUsed:
+                            type: boolean
+                        estimatedDateTimeArrival:
+                            format: date-time
+                            type: string
+                        weigher:
+                            type: object
+                            properties:
+                                permitNumber:
+                                    format: int32
+                                    type: integer
+                                name:
+                                    type: string
+                                Address:
+                                    type: string
+                species:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SpeciesCatch'
+                transporterName:
+                    type: string
+                transportDocSignedDate:
+                    format: date-time
+                    type: string
+                signatureOfTransporter:
+                    type: string
+                pdf:
+                    type: string
+                status:
+                    type: string
+                id:
+                    type: string
+                    properties:
+                        dateOfLoading:
+                            format: date-time
+                            type: string
+                        natureOfTransport:
+                            type: object
+                            properties:
+                                weighedAfterTransport:
+                                    type: boolean
+            example:
+                identifier:
+                    dateOfLoading: '2020-08-21T14:29:26Z'
+                    natureOfTransport:
+                        weighedAfterTransport: true
+                vessel:
+                    vesselName: MANHADEN
+                    vesselRegistrationNumber: FIN000101242
+                trips:
+                    portOfLanding: IEDUB
+                    logsheetNumber: TRP000IRL000I00101001
+                vehicle:
+                    vehicleRegistration: K98 1213
+                weighers:
+                    weighedOnLanding: true
+                    weighedAfterTransport: false
+                    approvedWeighSystemUsed: true
+                    estimatedDateTimeArrival: '2020-08-21T14:29:26Z'
+                    weigher:
+                        permitNumber: 123
+                        name: co-op’
+                        Address: 1-4 dublin road
+                species:
+                    -
+                        speciesFAOCode: COD
+                        FAOArea: '27'
+                        Quantity: 0
+                        MCRS: true
+                        Presentation: WHL
+                        Preservation: SAL
+                        quantityInKgs: 20
+                        quantityInNoOfFishes: 2000
+                    -
+                        speciesFAOCode: HAD
+                        FAOArea: '27'
+                        Quantity: 0
+                        MCRS: true
+                        Presentation: WHL
+                        Preservation: SAL
+                        quantityInKgs: 20
+                        quantityInNoOfFishes: 2000
+                transporterName: Mary Rose II
+                transportDocSignedDate: '2020-08-21T14:29:26Z'
+                signatureOfTransporter: sOVDt7KIzCP5D5HE/vVIaQ==
+                pdf: sOVDt7KIzCP5D5HE/vVIaQ==
+                status: approved
+        Presentation:
+            $ref: 'apicurio:13#/components/schemas/Presentation'
+        Species:
+            $ref: 'apicurio:13#/components/schemas/Species'
+        Vessel:
+            $ref: 'apicurio:13#/components/schemas/Vessel'
+        SpeciesCatch:
+            $ref: 'apicurio:13#/components/schemas/SpeciesCatch'
+        GeoInfo:
+            $ref: 'apicurio:13#/components/schemas/GeoInfo'
+        LogsheetSummary:
+            $ref: 'apicurio:13#/components/schemas/LogsheetSummary'
