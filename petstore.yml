@@ -1,0 +1,419 @@
+openapi: 3.0.2
+info:
+    title: PET-STORE-SAMPLE
+    version: 1.0.0
+    description: |-
+        A sample API that uses a petstore as an example to demonstrate features
+        in the OpenAPI 3.0 specification
+    termsOfService: 'http://swagger.io/terms/'
+    contact:
+        name: Swagger API Team
+        url: 'http://swagger.io'
+        email: apiteam@swagger.io
+    license:
+        name: Apache 2.0
+        url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+    -
+        url: 'http://petstore.swagger.io/api'
+paths:
+    /pets:
+        get:
+            parameters:
+                -
+                    style: form
+                    name: tags
+                    description: tags to filter by
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    in: query
+                    required: false
+                -
+                    name: limit
+                    description: maximum number of results to return
+                    schema:
+                        format: int32
+                        type: integer
+                    in: query
+                    required: false
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Pet'
+                            examples:
+                                laurent_cats:
+                                    value:
+                                        -
+                                            id: 1
+                                            name: Zaza
+                                            tag: cat
+                                        -
+                                            id: 2
+                                            name: Tigresse
+                                            tag: cat
+                                        -
+                                            id: 3
+                                            name: Maki
+                                            tag: cat
+                                        -
+                                            id: 4
+                                            name: Toufik
+                                            tag: cat
+                    description: pet response
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: unexpected error
+            operationId: findPets
+            description: |
+                Returns all pets from the system that the user has access to
+        post:
+            requestBody:
+                description: Pet to add to the store
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/NewPet'
+                        examples:
+                            tigresse:
+                                value:
+                                    name: Tigresse
+                                    tag: cat
+                required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Pet'
+                            examples:
+                                tigresse:
+                                    value:
+                                        id: 2
+                                        name: Tigresse
+                                        tag: cat
+                    description: pet response
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: unexpected error
+            operationId: addPet
+            description: Creates a new pet in the store.  Duplicates are allowed
+    '/pets/{id}':
+        get:
+            parameters:
+                -
+                    examples:
+                        zaza:
+                            value: 1
+                    name: id
+                    description: ID of pet to fetch
+                    schema:
+                        format: int64
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Pet'
+                            examples:
+                                zaza:
+                                    value:
+                                        id: 1
+                                        name: Zaza
+                                        tag: cat
+                    description: pet response
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: unexpected error
+            operationId: findPetById
+            description: |-
+                Returns a user based on a single ID, if the user does not have
+                access to the pet
+        delete:
+            parameters:
+                -
+                    name: id
+                    description: ID of pet to delete
+                    schema:
+                        format: int64
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    description: pet deleted
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: unexpected error
+            operationId: deletePet
+            description: deletes a single pet based on the ID supplied
+        parameters:
+            -
+                name: id
+                description: Pet identifier
+                schema:
+                    type: integer
+                in: path
+                required: true
+    /dogs:
+        summary: Path used to manage the list of dogs.
+        description: >-
+            The REST endpoint/path used to list and create zero or more `Dog` entities.  This path contains a
+            `GET` and `POST` operation to perform the list and create tasks, respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Dog'
+                    description: Successful response - returns an array of `Dog` entities.
+            operationId: getDogs
+            summary: List All Dogs
+            description: Gets a list of all `Dog` entities.
+        post:
+            requestBody:
+                description: A new `Dog` to be created.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Dog'
+                required: true
+            responses:
+                '201':
+                    description: Successful response.
+            operationId: createDog
+            summary: Create a Dog
+            description: Creates a new instance of a `Dog`.
+    '/dogs/{dogId}':
+        summary: Path used to manage a single Dog.
+        description: >-
+            The REST endpoint/path used to get, update, and delete single instances of an `Dog`.  This path
+            contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and delete tasks,
+            respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Dog'
+                    description: Successful response - returns a single `Dog`.
+            operationId: getDog
+            summary: Get a Dog
+            description: Gets the details of a single instance of a `Dog`.
+        put:
+            requestBody:
+                description: Updated `Dog` information.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Dog'
+                required: true
+            responses:
+                '202':
+                    description: Successful response.
+            operationId: updateDog
+            summary: Update a Dog
+            description: Updates an existing `Dog`.
+        delete:
+            responses:
+                '204':
+                    description: Successful response.
+            operationId: deleteDog
+            summary: Delete a Dog
+            description: Deletes an existing `Dog`.
+        parameters:
+            -
+                name: dogId
+                description: A unique identifier for a `Dog`.
+                schema:
+                    type: string
+                in: path
+                required: true
+    /foods:
+        summary: Path used to manage the list of foods.
+        description: >-
+            The REST endpoint/path used to list and create zero or more `Food` entities.  This path contains a
+            `GET` and `POST` operation to perform the list and create tasks, respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Food'
+                            examples:
+                                sample1:
+                                    value:
+                                        -
+                                            name: some text
+                                            description: some text
+                                            price: 94.98
+                                        -
+                                            name: some text
+                                            description: some text
+                                            price: 50.88
+                    description: Successful response - returns an array of `Food` entities.
+            operationId: getFoods
+            summary: List All Foods
+            description: Gets a list of all `Food` entities.
+        post:
+            requestBody:
+                description: A new `Food` to be created.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Food'
+                required: true
+            responses:
+                '201':
+                    description: Successful response.
+            operationId: createFood
+            summary: Create a Food
+            description: Creates a new instance of a `Food`.
+    '/foods/{foodId}':
+        summary: Path used to manage a single Food.
+        description: >-
+            The REST endpoint/path used to get, update, and delete single instances of an `Food`.  This path
+            contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and delete tasks,
+            respectively.
+        get:
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Food'
+                    description: Successful response - returns a single `Food`.
+            operationId: getFood
+            summary: Get a Food
+            description: Gets the details of a single instance of a `Food`.
+        put:
+            requestBody:
+                description: Updated `Food` information.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Food'
+                required: true
+            responses:
+                '202':
+                    description: Successful response.
+            operationId: updateFood
+            summary: Update a Food
+            description: Updates an existing `Food`.
+        delete:
+            responses:
+                '204':
+                    description: Successful response.
+            operationId: deleteFood
+            summary: Delete a Food
+            description: Deletes an existing `Food`.
+        parameters:
+            -
+                name: foodId
+                description: A unique identifier for a `Food`.
+                schema:
+                    type: string
+                in: path
+                required: true
+    /foo: {}
+components:
+    schemas:
+        NewPet:
+            required:
+                - name
+            properties:
+                name:
+                    type: string
+                tag:
+                    type: string
+        Error:
+            required:
+                - code
+                - message
+            properties:
+                code:
+                    format: int32
+                    type: integer
+                message:
+                    type: string
+        Pet:
+            type: object
+        Dog:
+            title: Root Type for Dog
+            description: ''
+            type: object
+            properties:
+                title:
+                    type: string
+                name:
+                    type: string
+                width:
+                    format: int32
+                    type: integer
+                height:
+                    format: int32
+                    type: integer
+            example:
+                title: Sample Konfabulator Widget
+                name: main_window
+                width: 500
+                height: 500
+        Food:
+            title: Root Type for Food
+            description: 'Pet food that we sell '
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    format: double
+                    type: number
+            example:
+                name: Whiskas
+                description: '6 x  sachets '
+                price: 5.99
+        Foo:
+            title: Root Type for Foo
+            description: ''
+            type: object
+            properties:
+                name:
+                    type: string
+                age:
+                    format: int32
+                    type: integer
+                postal address code:
+                    type: string
+            example:
+                name: fred
+                age: 27
+                postal address code: c15vw28
